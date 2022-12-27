@@ -23,8 +23,8 @@ export interface IUserRepo {
 
   findUserById(id: string): Promise<IUserResp | null>;
 
-  findUserByEmail(email: string): Promise<IUserResp | null>
-} 
+  findUserByEmail(email: string): Promise<IUserResp | null>;
+}
 
 export interface IUserController {
   handle(
