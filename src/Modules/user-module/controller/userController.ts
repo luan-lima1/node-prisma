@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { ServiceError } from "../../../config/error";
+import loggerIndex from "../../../config/logger/logger-index";
 import { StatusCodes } from "../../../enums/statusCodes";
 import { IUserService } from "../interfaces/userInterface";
 
@@ -14,7 +16,7 @@ export default class userController {
     response: Response,
     next: NextFunction
   ): Promise<Response | void> => {
-    console.log("Tentando Cadastrar o usuário");
+    loggerIndex.info("[UserController]::: Tentando cadastrar Usuário");
 
     try {
       const { name, email, password } = request.body;
@@ -25,8 +27,13 @@ export default class userController {
         password,
       });
       response.status(StatusCodes.OK).json(user);
-    } catch (error) {
-      throw new Error("Erro ao cadastrar Usuário");
+      return next();
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        const errorMessage = "Erro ao cadastrar Usuário.";
+        return next(new ServiceError(errorMessage));
+      }
+      next(error);
     }
   };
 }
