@@ -13,7 +13,7 @@ const loadConfig = (configSchema: any, data: any) => {
     port: envVars.PORT,
     application: {
       name: envVars.APPLICATION_NAME,
-      version: envVars.APPLICATION_NAME,
+      version: envVars.APPLICATION_VERSION,
     },
     services: {},
     logger: {

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { ServiceError } from "../../../config/error";
-import loggerIndex from "../../../config/logger/logger-index";
+import loggerIndex from "../../../config/logger/index";
 import { StatusCodes } from "../../../enums/statusCodes";
-import { IUserService } from "../interfaces/userInterface";
+import { IUserResp, IUserService } from "../interfaces/userInterface";
 
 export default class userController {
   private userService: IUserService;
@@ -16,7 +16,7 @@ export default class userController {
     response: Response,
     next: NextFunction
   ): Promise<Response | void> => {
-    loggerIndex.info("[UserController]::: Tentando cadastrar Usuário");
+    loggerIndex.info("[UserController]::: Tentando cadastrar Usuario");
 
     try {
       const { name, email, password } = request.body;
@@ -30,7 +30,27 @@ export default class userController {
       return next();
     } catch (error: any) {
       if (error.isAxiosError) {
-        const errorMessage = "Erro ao cadastrar Usuário.";
+        const errorMessage = "Erro ao cadastrar Usuario.";
+        return next(new ServiceError(errorMessage));
+      }
+      next(error);
+    }
+  };
+  getData = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<IUserResp | any> => {
+    try {
+      const { id } = request.params;
+
+      const findUser = await this.userService.find(id);
+
+      response.status(StatusCodes.OK).json(findUser);
+      return next();
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        const errorMessage = "Erro ao cadastrar Usuario.";
         return next(new ServiceError(errorMessage));
       }
       next(error);

@@ -12,6 +12,9 @@ export interface IUserServiceReq {
   email: string;
   password: string;
 }
+export interface IUserID {
+  id: string;
+}
 export interface IUserReq {
   name: string;
   email: string;
@@ -31,9 +34,13 @@ export interface IUserController {
     request: Request,
     response: Response,
     next: NextFunction
-  ): Promise<Response | void>;
+  ): Promise<Response | any>;
+
+  getData(data: IUserID): Promise<Response | void>;
 }
 
 export interface IUserService {
   execute(data: IUserServiceReq): Promise<IUserResp | void>;
+
+  find(id: string): Promise<IUserResp | any>;
 }
