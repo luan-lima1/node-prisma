@@ -10,6 +10,8 @@ const instanceController = new userController(
 );
 
 userRouter.post("/user", instanceController.handle);
-userRouter.get("/:id", instanceController.getData);
+userRouter.get("/:id", instanceController.getIdData);
+userRouter.put("/:id", instanceController.updateData);
+userRouter.delete("/:id", instanceController.deleteData);
 
 export default userRouter;

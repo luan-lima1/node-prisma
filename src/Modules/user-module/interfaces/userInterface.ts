@@ -14,6 +14,9 @@ export interface IUserServiceReq {
 }
 export interface IUserID {
   id: string;
+  name: string;
+  email: string;
+  password: string;
 }
 export interface IUserReq {
   name: string;
@@ -22,11 +25,15 @@ export interface IUserReq {
 }
 
 export interface IUserRepo {
-  create(data: IUserReq): Promise<IUserResp>;
+  createUser(data: IUserReq): Promise<IUserResp>;
 
-  findUserById(id: string): Promise<IUserResp | null>;
+  findUserById(id: string): Promise<IUserResp | any>;
 
   findUserByEmail(email: string): Promise<IUserResp | null>;
+
+  updateUser(data: IUserID): Promise<IUserResp | any>;
+
+  deleteUser(id: string): Promise<IUserResp | any>;
 }
 
 export interface IUserController {
@@ -36,11 +43,17 @@ export interface IUserController {
     next: NextFunction
   ): Promise<Response | any>;
 
-  getData(data: IUserID): Promise<Response | void>;
+  getIdData(data: IUserID): Promise<Response | void>;
+
+  updateData(id: string): Promise<Response | void>;
 }
 
 export interface IUserService {
-  execute(data: IUserServiceReq): Promise<IUserResp | void>;
+  executeServ(data: IUserServiceReq): Promise<IUserResp | void>;
 
-  find(id: string): Promise<IUserResp | any>;
+  findIdServ(id: string): Promise<IUserResp | any>;
+
+  updateServ(data: IUserID): Promise<IUserResp | any>;
+
+  deleteServ(id: string): Promise<IUserResp | any>;
 }

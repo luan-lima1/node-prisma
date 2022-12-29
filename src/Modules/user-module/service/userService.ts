@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 import { ServiceError, ValidationError } from "../../../config/error";
 import loggerIndex from "../../../config/logger/index";
 import {
+  IUserID,
   IUserRepo,
   IUserReq,
   IUserResp,
@@ -15,7 +16,7 @@ export default class UserService implements IUserService {
     this.userRepository = userRepository;
   }
 
-  async execute(data: IUserReq): Promise<IUserResp | void> {
+  async executeServ(data: IUserReq): Promise<IUserResp | void> {
     loggerIndex.info("[UserService]::: Cadastrando Usuario");
 
     try {
@@ -27,7 +28,7 @@ export default class UserService implements IUserService {
 
       const hashPass = await hash(data.password, 8);
 
-      const response = await this.userRepository.create({
+      const response = await this.userRepository.createUser({
         ...data,
         password: hashPass,
       });
@@ -40,14 +41,54 @@ export default class UserService implements IUserService {
     }
   }
 
-  async find(id: string) {
+  async findIdServ(id: string) {
     try {
       const getUser = await this.userRepository.findUserById(id);
 
       if (getUser) {
         loggerIndex.info("[UserService]::: Usuario encontrado no sistema.");
-        return getUser;
       }
+      return getUser;
+    } catch (error) {
+      const errorMessage = "Id de Usuario não encontrado no sistema.";
+      loggerIndex.error(errorMessage);
+      throw new ServiceError(errorMessage);
+    }
+  }
+
+  async updateServ(data: IUserID): Promise<IUserResp | any> {
+    try {
+      const getUser = await this.userRepository.findUserById(data.id);
+
+      if (getUser) {
+        loggerIndex.info("[UserService]::: Atualizando Dados de Usuario");
+      }
+
+      const response = await this.userRepository.updateUser({
+        ...data,
+      });
+
+      loggerIndex.info("[UserService]::: Usuario Atualizado com Sucesso.");
+      return response;
+    } catch (error) {
+      const errorMessage = "Id de Usuario nao encontrado no sistema.";
+      loggerIndex.error(errorMessage);
+      throw new ServiceError(errorMessage);
+    }
+  }
+
+  async deleteServ(id: string) {
+    try {
+      const getUser = await this.userRepository.findUserById(id);
+
+      if (getUser) {
+        loggerIndex.info("[UserService]::: Usuario encontrado no sistema.");
+      }
+
+      const deleteUser = await this.userRepository.deleteUser(id);
+
+      loggerIndex.info("[UserService]::: Usuario deletado com Sucesso.");
+      return deleteUser;
     } catch (error) {
       const errorMessage = "Id de Usuario não encontrado no sistema.";
       loggerIndex.error(errorMessage);

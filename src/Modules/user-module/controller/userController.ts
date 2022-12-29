@@ -21,7 +21,7 @@ export default class userController {
     try {
       const { name, email, password } = request.body;
 
-      const user = await this.userService.execute({
+      const user = await this.userService.executeServ({
         name,
         email,
         password,
@@ -36,7 +36,7 @@ export default class userController {
       next(error);
     }
   };
-  getData = async (
+  getIdData = async (
     request: Request,
     response: Response,
     next: NextFunction
@@ -44,9 +44,57 @@ export default class userController {
     try {
       const { id } = request.params;
 
-      const findUser = await this.userService.find(id);
+      const findUser = await this.userService.findIdServ(id);
 
       response.status(StatusCodes.OK).json(findUser);
+      return next();
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        const errorMessage = "Erro ao cadastrar Usuario.";
+        return next(new ServiceError(errorMessage));
+      }
+      next(error);
+    }
+  };
+
+  updateData = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<IUserResp | void> => {
+    try {
+      const { name, email, password } = request.body;
+      const { id } = request.params;
+
+      const updateUser = await this.userService.updateServ({
+        id,
+        name,
+        email,
+        password,
+      });
+
+      response.status(StatusCodes.OK).json(updateUser);
+      return next();
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        const errorMessage = "Erro ao cadastrar Usuario.";
+        return next(new ServiceError(errorMessage));
+      }
+      next(error);
+    }
+  };
+
+  deleteData = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<IUserResp | any> => {
+    try {
+      const { id } = request.params;
+
+      await this.userService.deleteServ(id);
+
+      response.status(StatusCodes.OK).json();
       return next();
     } catch (error: any) {
       if (error.isAxiosError) {
